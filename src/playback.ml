@@ -21,6 +21,7 @@
 open Core
 open Async
 open Cohttp_async
+open Unix
 
 open Representation
 open Segm_result
@@ -114,8 +115,9 @@ let rec playback
     let results =
       {
         segment_number = segment_number;
-        arrival_time =
-          int_of_float @@ Time.Span.to_us (Time.diff current_time absolute_start_time);
+        arrival_time = Unix.gettimeofday();
+        (*arrival_time =
+        #  int_of_float @@ Time.Span.to_us (Time.diff current_time absolute_start_time);*)
         time_for_delivery = int_of_float @@ Time.Span.to_us time_diff;
         stall_dur = stall;
         representation_rate = next_repr.bandwidth;
@@ -260,7 +262,7 @@ let print_log_header_into_file = function
   | Some outc -> List.iteri log_columns
     ~f:(fun idx x -> Out_channel.output_string outc x;
       match not @@ phys_equal idx (List.length log_columns - 1) with
-      | true -> Out_channel.output_string outc "  "
+      | true -> Out_channel.output_string outc ","
       | false -> Out_channel.newline outc
     );
   | None -> ()

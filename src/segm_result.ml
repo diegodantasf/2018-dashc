@@ -30,7 +30,7 @@ type segm_result = {
   segment_number : int;
   (* arrival_time is absolute time since the request of MPD or
      request of the first segment, ms *)
-  arrival_time : int;
+  arrival_time : float;
   (* time_for_delivey is request_time - response_time,
      us, because in a local network it can be less than 1 ms
      which results in 0 during conversion to int *)
@@ -68,7 +68,8 @@ let print_result result_ = function
   | None ->
     print_int_zeros ~number:result_.segment_number ~zeroes_number:5 ~zero:false;
     print_string "  ";
-    print_int_zeros ~number:(result_.arrival_time / us) ~zeroes_number:8 ~zero:false;
+    printf "%10.3f" result_.arrival_time;
+    (*print_int_zeros ~number:(result_.arrival_time / us) ~zeroes_number:8 ~zero:false;*)
     print_string "  ";
     print_int_zeros ~number:(result_.time_for_delivery / us) ~zeroes_number:8 ~zero:false;
     print_string "  ";
@@ -92,22 +93,26 @@ let print_result result_ = function
     printf "%10.3f" result_.buffer_level_in_momentum;
     print_endline ""
   | Some outc ->
-    Out_channel.output_string outc @@ Printf.sprintf "%5d" result_.segment_number ^ "  ";
+    Out_channel.output_string outc @@ 
+      Printf.sprintf "%d" result_.segment_number ^ ",";
     Out_channel.output_string outc @@
-      Printf.sprintf "%8d" (result_.arrival_time / us) ^ "  ";
+      Printf.sprintf "%.6f" result_.arrival_time ^ ",";
+      (*Printf.sprintf "%8d" (result_.arrival_time / us) ^ "  ";*)
     Out_channel.output_string outc @@
-      Printf.sprintf "%8d" (result_.time_for_delivery / us) ^ "  ";
-    Out_channel.output_string outc @@ Printf.sprintf "%9d" result_.stall_dur ^ "  ";
+      Printf.sprintf "%d" (result_.time_for_delivery / us) ^ ",";
+    Out_channel.output_string outc @@ 
+      Printf.sprintf "%d" result_.stall_dur ^ ",";
     Out_channel.output_string outc @@
-      Printf.sprintf "%9d" (result_.representation_rate / measure) ^ "  ";
+      Printf.sprintf "%d" (result_.representation_rate / measure) ^ ",";
     Out_channel.output_string outc @@
-      Printf.sprintf "%8d" (int_of_float
+      Printf.sprintf "%d" (int_of_float
         (((float_of_int result_.segment_size *. 8. *. measure_float) /.
-        float_of_int result_.time_for_delivery) *. us_float /. measure_float)) ^ "  ";
+        float_of_int result_.time_for_delivery) *. us_float /. measure_float)) ^ ",";
     Out_channel.output_string outc @@
-      Printf.sprintf "%8d" (result_.actual_representation_rate / measure) ^ "  ";
-    Out_channel.output_string outc @@ Printf.sprintf "%9d" result_.segment_size ^ "  ";
+      Printf.sprintf "%d" (result_.actual_representation_rate / measure) ^ ",";
+    Out_channel.output_string outc @@ 
+      Printf.sprintf "%d" result_.segment_size ^ ",";
     Out_channel.output_string outc @@
-      Printf.sprintf "%10.3f" result_.buffer_level_in_momentum ^ "  ";
+      Printf.sprintf "%.3f" result_.buffer_level_in_momentum ^ ",";
     Out_channel.newline outc;
     Out_channel.flush outc
