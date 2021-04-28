@@ -23,4 +23,4 @@
  )
 )
 
-(rule (copy ../../../test_mpd/segmentlist_bbb_enc_10min_x264_dash.mpd.txt segmentlist_bbb_enc_10min_x264_dash.mpd.txt))
+(rule (copy ../test_mpd/seg␗mentlist_bbb_enc_10min_x264_dash.mpd.txt segmentlist_bbb_enc_10min_x264_dash.mpd.txt))
