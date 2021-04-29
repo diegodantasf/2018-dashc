@@ -8,3 +8,7 @@ test:
 		jbuilder build @_build/default/src/runtest
 clean:
 		jbuilder clean
+install:
+		cp dashc.exe /usr/local/bin/dashc
+uninstall:
+		rm /usr/local/bin/dashc
